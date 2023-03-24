@@ -1,16 +1,23 @@
 from tkinter import *
 from tkinter import ttk
 import tkinter as tk
+from controladorBD import *
 
-def Guardar():
-    Nombre = entradaName.get()
-    Correo = entradaCorreo.get()
-    Password = entradaPass.get()
+#Instanciamos un objeto tipo de controladorBD
+myControlador = controladorBD()    
 #Instancia ventana
 paddingY = 5
 ventana = Tk()
 ventana.title("CRUD users")
 ventana.geometry("420x360")
+
+#Guardamos los datos de las entradas y llamamos a la funcion para guardar el usuario
+def Guardar():
+    Nombre = entradaName.get()
+    Correo = entradaCorreo.get()
+    Password = entradaPass.get()
+    myControlador.guardarUsuario(Nombre,Correo,Password)
+    
 #Para el notebook
 panel = ttk.Notebook(ventana)
 panel.pack(fill="both",expand=True)
@@ -44,7 +51,7 @@ entradaCorreo.pack(pady=paddingY)
 #Para la password
 lblPass = Label(FrameEntradas,text="Contraseña:")
 lblPass.pack(pady=paddingY)
-entradaPass = Entry(FrameEntradas,textvariable=varPass)
+entradaPass = Entry(FrameEntradas,textvariable=varPass,show="¢")
 entradaPass.pack(pady=paddingY)
 
 #Seccion de controles de la pestania
