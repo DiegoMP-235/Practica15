@@ -17,7 +17,20 @@ def Guardar():
     Correo = entradaCorreo.get()
     Password = entradaPass.get()
     myControlador.guardarUsuario(Nombre,Correo,Password)
-    
+
+def Consultar1Usuario():
+    ID = entradaID.get()
+    UsuarioCons = myControlador.consultarUsuario(ID)
+
+    if(len(UsuarioCons) < 1):
+        messagebox.showinfo("No se encontraron resultados","Este id no se encontro en la base de datos")
+        return
+    for usuario in UsuarioCons:
+        row = "Id:"+str(usuario[0])+" \nNombre:"+usuario[1]+" \nCorreo:"+usuario[2]+" \nContrasenia:"+str(usuario[3])
+       
+    txtResult.delete('0.0','end')  
+    txtResult.insert("0.0",row)
+        
 #Para el notebook
 panel = ttk.Notebook(ventana)
 panel.pack(fill="both",expand=True)
@@ -54,9 +67,28 @@ lblPass.pack(pady=paddingY)
 entradaPass = Entry(FrameEntradas,textvariable=varPass,show="¢")
 entradaPass.pack(pady=paddingY)
 
-#Seccion de controles de la pestania
+#Pestania 2(consulta de un usuarios)
 btnGuardar = Button(FrameCntrls,text="Guardar usuario",command=Guardar)
 btnGuardar.pack(pady=paddingY)
+
+#Seccion de consultas
+FrameC = Frame(pestania2)
+FrameC.pack(expand=True,fill="both")
+FrameBTNC = Frame(pestania2)
+FrameBTNC.pack(expand=True,fill="both")
+
+TittleC = Label(FrameC,text="Buscar usuario",font=("Arial", 16, "bold"), fg="#00CC33", bg="#f2f2f2", padx=6, pady=6)
+TittleC.pack(pady=paddingY)
+
+LblID = Label(FrameC,text="Identificador del usuario:").pack()
+entradaID = Entry(FrameC)
+entradaID.pack()
+#Para mostrar los resultados
+LblResul = Label(FrameC,text="Resultados:")
+txtResult = tk.Text(FrameC,height=7,width=35,font=("Aria;",12))
+txtResult.pack(pady=paddingY)
+#Boton de accion de la pestania
+BTNCons = Button(FrameBTNC,text="Buscar",command=Consultar1Usuario).pack()
 
 #agregamos las pestaniias al notebook
 panel.add(pestania1,text="Formulario de usuarios")
