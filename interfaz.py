@@ -11,6 +11,7 @@ ventana = Tk()
 ventana.title("CRUD users")
 ventana.geometry("420x360")
 
+
 #Guardamos los datos de las entradas y llamamos a la funcion para guardar el usuario
 def Guardar():
     Nombre = entradaName.get()
@@ -30,7 +31,16 @@ def Consultar1Usuario():
        
     txtResult.delete('0.0','end')  
     txtResult.insert("0.0",row)
-        
+    
+def ConultarAllUsers():
+    ResultadoUsers = myControlador.consultaAllUsuarios() 
+    
+    for i in tree.get_children():
+        tree.delete(i)
+     
+    for Usuario in ResultadoUsers:
+        tree.insert("",END,values=(Usuario[0],Usuario[1],Usuario[2],Usuario[3]))
+         
 #Para el notebook
 panel = ttk.Notebook(ventana)
 panel.pack(fill="both",expand=True)
@@ -67,10 +77,10 @@ lblPass.pack(pady=paddingY)
 entradaPass = Entry(FrameEntradas,textvariable=varPass,show="¢")
 entradaPass.pack(pady=paddingY)
 
-#Pestania 2(consulta de un usuarios)
 btnGuardar = Button(FrameCntrls,text="Guardar usuario",command=Guardar)
 btnGuardar.pack(pady=paddingY)
 
+#Pestania 2(consulta de un usuarios)
 #Seccion de consultas
 FrameC = Frame(pestania2)
 FrameC.pack(expand=True,fill="both")
@@ -89,6 +99,33 @@ txtResult = tk.Text(FrameC,height=7,width=35,font=("Aria;",12))
 txtResult.pack(pady=paddingY)
 #Boton de accion de la pestania
 BTNCons = Button(FrameBTNC,text="Buscar",command=Consultar1Usuario).pack()
+
+#Elementos de la pestania 3
+
+FrameC2 = Frame(pestania3)
+FrameC2.pack(expand=True,fill="both")
+FrameContC2 = Frame(pestania3)
+FrameContC2.pack(expand=True,fill="both")
+window_width = ventana.winfo_width()
+
+#Ponemos encabezados de los campos de la bd
+Columnas = ('ID','Nombre','Correo','Password')
+tree = ttk.Treeview(FrameContC2,columns=Columnas,show='headings')
+tree.heading('ID', text='ID')
+tree.heading('Nombre', text='Nombre')
+tree.heading('Correo', text='Correo')
+tree.heading('Password', text='Contrasenia')
+tree.pack()
+
+tree.column('ID',width=105)
+tree.column('Nombre',width=105)
+tree.column('Correo',width=105)
+tree.column('Password',width=105)
+
+LblTituloC2 = Label(FrameC2,text="Buscar usuarios",font=("Arial", 16, "bold"), fg="#00CC33", bg="#f2f2f2", padx=6, pady=6)
+LblTituloC2.pack()
+btnConsAll =  Button(FrameC2,command=ConultarAllUsers,text='Listar')
+btnConsAll.pack()
 
 #agregamos las pestaniias al notebook
 panel.add(pestania1,text="Formulario de usuarios")
