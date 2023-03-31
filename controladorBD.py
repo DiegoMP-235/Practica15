@@ -56,4 +56,17 @@ class controladorBD:
             except sqlite3.OperationalError:
                 print("Ha occurido un error en la consulta")  
                 
+    def consultaAllUsuarios(self):
+        Conexion = self.conectaBD()
+        try:
+            Cursor = Conexion.cursor()
+            SQL = "SELECT * FROM TBRegistros"
+            Cursor.execute(SQL) #Lanzamos la consulta
+            ResultadosCons = Cursor.fetchall() #Guardamos los resultados de la consulta
+            Conexion.close()
+            return ResultadosCons 
+        except sqlite3.OperationalError:
+            print("Ha occurido un error en la consulta")  
+                                  
+                
                  
