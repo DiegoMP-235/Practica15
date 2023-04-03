@@ -67,6 +67,22 @@ class controladorBD:
             return ResultadosCons 
         except sqlite3.OperationalError:
             print("Ha occurido un error en la consulta")  
-                                  
-                
+         
+    def actualizaUsuario(self,ID,Nombre,Correo,Password):
+
+        if(ID == "" or Nombre == "" or Correo == "" or Password == ""):
+            messagebox.showwarning("Aviso!","Por favor completa los campos")
+            return     
+        Conexion = self.conectaBD()
+        try:
+            Cursor = Conexion.cursor()
+            
+            Datos = [Nombre,Correo,Password,ID]
+            SQL = "UPDATE TBRegistros SET nombre = ?,correo = ?,password = ? WHERE id = ?"
+            #SQL2 = f"UPDATE TBRegistros SET nombre={Nombre},correo={Correo},password={Password} WHERE id={ID}"     
+            Cursor.execute(SQL,Datos)
+            Conexion.commit()
+            messagebox.showinfo("Exito!","Se actualizo correctamente")
+        except sqlite3.OperationalError:                            
+            print("Ha occurido un error en la actualizacion")  
                  
