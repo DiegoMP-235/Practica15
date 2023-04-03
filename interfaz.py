@@ -9,8 +9,7 @@ myControlador = controladorBD()
 paddingY = 5
 ventana = Tk()
 ventana.title("CRUD users")
-ventana.geometry("420x360")
-
+ventana.geometry("510x360")
 
 #Guardamos los datos de las entradas y llamamos a la funcion para guardar el usuario
 def Guardar():
@@ -40,6 +39,37 @@ def ConultarAllUsers():
      
     for Usuario in ResultadoUsers:
         tree.insert("",END,values=(Usuario[0],Usuario[1],Usuario[2],Usuario[3]))
+
+def buscarIDActualizar():
+    ID = IDAct.get()
+    Resultado = myControlador.consultarUsuario(ID)
+    if(len(Resultado) < 1):
+        messagebox.showinfo("No se encontraron resultados","Este id no se encontro en la base de datos")
+        return
+    
+    activaCampos()
+    for usuarioAct in Resultado:
+        #print(str(usuarioAct[1])+str(usuarioAct[2]+str(usuarioAct[3])))
+        EntradaNameAct.insert(0,usuarioAct[1])
+        EntradaCorreoAct.insert(0,usuarioAct[2])
+        EntradaPasswordAct.insert(0,usuarioAct[3])
+    activaBtnAct()
+
+def activaCampos():
+    EntradaNameAct.config(state="normal")
+    EntradaCorreoAct.config(state="normal")
+    EntradaPasswordAct.config(state="normal")
+
+def activaBtnAct():
+    BtnActualizar.config(state="normal")    
+
+def actualizaUser():
+    ID = IDAct.get()
+    NombreAct = EntradaNameAct.get()
+    CorreoAct = EntradaCorreoAct.get()
+    PasswordAct = EntradaPasswordAct.get()
+    
+    myControlador.actualizaUsuario(ID,NombreAct,CorreoAct,PasswordAct)      
          
 #Para el notebook
 panel = ttk.Notebook(ventana)
@@ -48,6 +78,7 @@ pestania1 = ttk.Frame(panel)
 pestania2 = ttk.Frame(panel)
 pestania3 = ttk.Frame(panel)
 pestania4 = ttk.Frame(panel)
+pestania5 = ttk.Frame(panel)
 
 #Pestania 1
 #Variables para recuperar los datos de los entry
@@ -127,11 +158,58 @@ LblTituloC2.pack()
 btnConsAll =  Button(FrameC2,command=ConultarAllUsers,text='Listar')
 btnConsAll.pack()
 
+#pestania de actualizacion
+FActEnt = Frame(pestania4)
+FActEnt.pack(expand=True,fill="both")
+
+FActBtn = Frame(pestania4)
+FActBtn.pack(expand=True,fill="both")
+
+TittleAct = Label(FActEnt,text="Actualizar usuario",font=("Arial", 14, "bold"), fg="#00CC33", bg="#f2f2f2", padx=6, pady=6)
+TittleAct.pack()
+
+LblIdAct = Label(FActEnt,text="ID a actualizar")
+LblIdAct.pack(pady=paddingY)
+
+#Entrada para el texto a actualizar
+IDAct = Entry(FActEnt)
+IDAct.pack()
+
+BtnCons = Button(FActEnt,text="Buscar",command=buscarIDActualizar)
+BtnCons.pack(pady=paddingY)
+
+#Campos donde se cargaran los datos a actualizar
+LblName = Label(FActEnt,text="Nombre")
+LblName.pack()
+EntradaNameAct = Entry(FActEnt)
+EntradaNameAct.pack()
+EntradaNameAct.config(state="disabled")
+
+
+LblCorreoAct = Label(FActEnt,text="Correo")
+LblCorreoAct.pack()
+EntradaCorreoAct = Entry(FActEnt)
+EntradaCorreoAct.pack()
+EntradaCorreoAct.config(state="disabled")
+
+LblPassAct = Label(FActEnt,text="Contraseña")
+LblPassAct.pack()
+
+EntradaPasswordAct = Entry(FActEnt)
+EntradaPasswordAct.pack()
+EntradaPasswordAct.config(state="disabled")
+
+#Boton de accion para actualizar
+BtnActualizar = Button(FActBtn,text="Actualizar",command=actualizaUser)
+BtnActualizar.pack()
+BtnActualizar.config(state="disabled")
+
 #agregamos las pestaniias al notebook
 panel.add(pestania1,text="Formulario de usuarios")
 panel.add(pestania2,text="Buscar usuario")
 panel.add(pestania3,text="Buscar usuarios")
 panel.add(pestania4,text="Actualizar usuario")
+panel.add(pestania5,text="Eliminar usuario")
 
 
 ventana.mainloop()
