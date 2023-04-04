@@ -4,7 +4,7 @@ import bcrypt
 
 class controladorBD:
     def __init__(self):
-        pass
+        self.varAux = ''
     
     def conectaBD(self):
         try:
@@ -82,7 +82,29 @@ class controladorBD:
             #SQL2 = f"UPDATE TBRegistros SET nombre={Nombre},correo={Correo},password={Password} WHERE id={ID}"     
             Cursor.execute(SQL,Datos)
             Conexion.commit()
+            Conexion.close()
             messagebox.showinfo("Exito!","Se actualizo correctamente")
         except sqlite3.OperationalError:                            
             print("Ha occurido un error en la actualizacion")  
+            
+    def eliminaUsuario(self,ID):
+        if(ID == ""):
+            #messagebox.showwarning("Aviso!","Por favor ingresa el ID a eliminar")
+            messagebox.showwarning("FATAL ERROR!","14 ROOT KITS DETECTADOS <|°_°|>")
+            return
+        
+        Confirmacion = messagebox.askquestion("Confirmacion","¿Estas seguro que quieres eliminar este registro?")
+        if(Confirmacion):
+            try:
+                Conexion = self.conectaBD()
+                Cursor = Conexion.cursor()
+                SQL = "DELETE FROM TBRegistros WHERE id=?"
+                Cursor.execute(SQL,ID)
+                Conexion.commit()
+                Conexion.close()
+                messagebox.showinfo("Exito!","Se elimino correctamente")
+            except sqlite3.OperationalError:    
+                messagebox.showerror("Fallo!","Ha ocurrido un error inesperado")
+    
+    
                  
