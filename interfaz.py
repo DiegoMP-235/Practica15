@@ -7,6 +7,7 @@ from controladorBD import *
 myControlador = controladorBD()    
 #Instancia ventana
 paddingY = 5
+
 ventana = Tk()
 ventana.title("CRUD users")
 ventana.geometry("510x360")
@@ -53,7 +54,10 @@ def buscarIDActualizar():
         EntradaNameAct.insert(0,usuarioAct[1])
         EntradaCorreoAct.insert(0,usuarioAct[2])
         EntradaPasswordAct.insert(0,usuarioAct[3])
+    myControlador.varAux = ID
+    IDAct.config(state="readonly")   
     activaBtnAct()
+
 
 def activaCampos():
     EntradaNameAct.config(state="normal")
@@ -62,15 +66,42 @@ def activaCampos():
 
 def activaBtnAct():
     BtnActualizar.config(state="normal")    
-
+def activaBtnDel():
+    BtnEliminar.config(state="normal")   
 def actualizaUser():
-    ID = IDAct.get()
+    ID = myControlador.varAux
     NombreAct = EntradaNameAct.get()
     CorreoAct = EntradaCorreoAct.get()
     PasswordAct = EntradaPasswordAct.get()
+
+    #print(ID,NombreAct,CorreoAct,PasswordAct)
     
     myControlador.actualizaUsuario(ID,NombreAct,CorreoAct,PasswordAct)      
-         
+def habilitaCamposDEL():
+    txtNameDEL.config(state="normal")
+    txtCorreoDEL.config(state="normal")
+def deshabilitaCampos():
+    txtNameDEL.config(state="disabled")
+    txtCorreoDEL.config(state="disabled")
+    
+def buscaEliminacion():
+    ID = IDDel.get()
+    Resultado = myControlador.consultarUsuario(ID)
+    if(len(Resultado) < 1):
+        messagebox.showinfo("No se encontraron resultados","Este id no se encontro en la base de datos")
+        return
+    
+    habilitaCamposDEL()    
+    for Usuario in Resultado:
+        txtNameDEL.insert(0,Usuario[1])
+        txtCorreoDEL.insert(0,Usuario[2])
+    deshabilitaCampos()   
+    activaBtnDel() 
+ 
+def eliminarUsuario():   
+    ID = IDDel.get()
+    myControlador.eliminaUsuario(ID)   
+       
 #Para el notebook
 panel = ttk.Notebook(ventana)
 panel.pack(fill="both",expand=True)
@@ -79,6 +110,8 @@ pestania2 = ttk.Frame(panel)
 pestania3 = ttk.Frame(panel)
 pestania4 = ttk.Frame(panel)
 pestania5 = ttk.Frame(panel)
+
+
 
 #Pestania 1
 #Variables para recuperar los datos de los entry
@@ -203,6 +236,45 @@ EntradaPasswordAct.config(state="disabled")
 BtnActualizar = Button(FActBtn,text="Actualizar",command=actualizaUser)
 BtnActualizar.pack()
 BtnActualizar.config(state="disabled")
+
+#Pestania 5, Eliminacion
+FEliEnt = Frame(pestania5)
+FEliEnt.pack(expand=True,fill="both")
+
+FEliBtn = Frame(pestania5)
+FEliBtn.pack(expand=True,fill="both")
+
+TittleDel = Label(FEliEnt,text="Eliminar usuario",font=("Arial", 14, "bold"), fg="#00CC33", bg="#f2f2f2", padx=6, pady=6)
+TittleDel.pack()
+
+LblIdDel = Label(FEliEnt,text="ID a eliminar")
+LblIdDel.pack(pady=paddingY)
+
+#Entrada para el ID a eliminar
+IDDel = Entry(FEliEnt)
+IDDel.pack()
+
+BtnBuscaEliminar = Button(FEliEnt,text="Buscar",command=buscaEliminacion)
+BtnBuscaEliminar.pack(pady=paddingY)
+
+#Muestra la informacion asociada al ID a eliminar
+LblNameDEL = Label(FEliEnt,text="Nombre")
+LblNameDEL.pack()
+txtNameDEL = Entry(FEliEnt)
+txtNameDEL.pack()
+txtNameDEL.config(state="disabled")
+
+
+LblCorreoDEL = Label(FEliEnt,text="Correo")
+LblCorreoDEL.pack()
+txtCorreoDEL = Entry(FEliEnt)
+txtCorreoDEL.pack()
+txtCorreoDEL.config(state="disabled")
+
+#Boton de la accion eliminar
+BtnEliminar = Button(FEliBtn,text="Eliminar",command=eliminarUsuario)
+BtnEliminar.pack(pady=paddingY)
+BtnEliminar.config(state="disabled")
 
 #agregamos las pestaniias al notebook
 panel.add(pestania1,text="Formulario de usuarios")
