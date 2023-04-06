@@ -72,12 +72,12 @@ class controladorBD:
 
         if(ID == "" or Nombre == "" or Correo == "" or Password == ""):
             messagebox.showwarning("Aviso!","Por favor completa los campos")
-            return     
+            return      
         Conexion = self.conectaBD()
         try:
             Cursor = Conexion.cursor()
             
-            Datos = [Nombre,Correo,Password,ID]
+            Datos = [Nombre,Correo,self.encriptaPassword(Password),ID]
             SQL = "UPDATE TBRegistros SET nombre = ?,correo = ?,password = ? WHERE id = ?"
             #SQL2 = f"UPDATE TBRegistros SET nombre={Nombre},correo={Correo},password={Password} WHERE id={ID}"     
             Cursor.execute(SQL,Datos)
@@ -86,15 +86,49 @@ class controladorBD:
             messagebox.showinfo("Exito!","Se actualizo correctamente")
         except sqlite3.OperationalError:                            
             print("Ha occurido un error en la actualizacion")  
+    
+    
+    """        
+    def comparaPasswordDif(self,ID,PasswordNew):
+        Conexion = self.conectaBD()
+        try:
+            Cursor = Conexion.cursor()
+            #Seleccionamos la contrasenia de la base de datos para verificar si es 
+            #diferente, en caso de ser asi, la encriptaremos
+            SQL = "SELECT password FROM TBRegistros WHERE id = ?"
+            Cursor.execute(SQL,ID)
+            ResultadosCons = Cursor.fetchall()
+            Conexion.close()
+            PasswordActual = ResultadosCons[0]
+            print("Pass act:"+str(PasswordActual))
+            print("Pass new(no encryp):"+str(PasswordNew))
+            print("Contrasenia new (encr):"+str(self.encriptaPassword(PasswordNew)))
             
+            if(str(PasswordActual) == str(PasswordNew)):
+                print("No se ha modificado las password")
+            else:
+                print("Se han modificado las password")
+                
+            return
+        
+            if(str(PasswordActual) != str(PasswordNew)):
+                if(str(PasswordActual) != str(self.encriptaPassword(PasswordNew))):
+                    return False
+            
+            return True
+            
+        except sqlite3.OperationalError:  
+            print("Ha occurido un error en la consulta")  
+    """    
+                
     def eliminaUsuario(self,ID):
         if(ID == ""):
             #messagebox.showwarning("Aviso!","Por favor ingresa el ID a eliminar")
             messagebox.showwarning("FATAL ERROR!","14 ROOT KITS DETECTADOS <|°_°|>")
             return
         
-        Confirmacion = messagebox.askquestion("Confirmacion","¿Estas seguro que quieres eliminar este registro?")
-        if(Confirmacion):
+        Confirmacion = messagebox.askyesno("Confirmacion","¿Estas seguro que quieres eliminar este registro?\nID:"+str(ID))
+        if(Confirmacion == True):
             try:
                 Conexion = self.conectaBD()
                 Cursor = Conexion.cursor()
