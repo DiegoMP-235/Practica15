@@ -53,7 +53,7 @@ def buscarIDActualizar():
         #print(str(usuarioAct[1])+str(usuarioAct[2]+str(usuarioAct[3])))
         EntradaNameAct.insert(0,usuarioAct[1])
         EntradaCorreoAct.insert(0,usuarioAct[2])
-        EntradaPasswordAct.insert(0,usuarioAct[3])
+        #EntradaPasswordAct.insert(0,usuarioAct[3])
     myControlador.varAux = ID
     IDAct.config(state="readonly")   
     activaBtnAct()
@@ -101,6 +101,17 @@ def buscaEliminacion():
 def eliminarUsuario():   
     ID = IDDel.get()
     myControlador.eliminaUsuario(ID)   
+
+def restablecePestAct():
+    EntradaNameAct.delete(0,END)
+    EntradaCorreoAct.delete(0,END)
+    EntradaPasswordAct.delete(0,END)
+    EntradaNameAct.config(state="disabled")
+    EntradaCorreoAct.config(state="disabled")
+    EntradaPasswordAct.config(state="disabled")  
+    IDAct.config(state="normal") 
+    IDAct.delete(0,END)
+    BtnActualizar.config(state="disabled")
        
 #Para el notebook
 panel = ttk.Notebook(ventana)
@@ -172,24 +183,31 @@ FrameContC2 = Frame(pestania3)
 FrameContC2.pack(expand=True,fill="both")
 window_width = ventana.winfo_width()
 
-#Ponemos encabezados de los campos de la bd
-Columnas = ('ID','Nombre','Correo','Password')
-tree = ttk.Treeview(FrameContC2,columns=Columnas,show='headings')
-tree.heading('ID', text='ID')
-tree.heading('Nombre', text='Nombre')
-tree.heading('Correo', text='Correo')
-tree.heading('Password', text='Contrasenia')
-tree.pack()
-
-tree.column('ID',width=105)
-tree.column('Nombre',width=105)
-tree.column('Correo',width=105)
-tree.column('Password',width=105)
-
 LblTituloC2 = Label(FrameC2,text="Buscar usuarios",font=("Arial", 16, "bold"), fg="#00CC33", bg="#f2f2f2", padx=6, pady=6)
 LblTituloC2.pack()
 btnConsAll =  Button(FrameC2,command=ConultarAllUsers,text='Listar')
 btnConsAll.pack()
+
+#Scrollbar vertical
+scrollbar = tk.Scrollbar(FrameContC2,orient="vertical")
+scrollbar.pack(side=RIGHT,fill=Y)
+
+#scrollbar horizontal
+scrollbar2 = tk.Scrollbar(FrameContC2,orient="horizontal")
+scrollbar2.pack(side="bottom",fill=X)
+
+#Ponemos encabezados de los campos de la bd
+Columnas = ('ID','Nombre','Correo','Password')
+tree = ttk.Treeview(FrameContC2,columns=Columnas,show='headings',yscrollcommand=scrollbar.set,xscrollcommand=scrollbar2.set)
+tree.heading('ID', text='ID')
+tree.heading('Nombre', text='Nombre')
+tree.heading('Correo', text='Correo')
+tree.heading('Password', text='Contrasenia')
+tree.pack(fill='both', expand=True)
+
+#Configuramos el scroll
+scrollbar.config(command=tree.yview)
+scrollbar2.config(command=tree.xview)
 
 #pestania de actualizacion
 FActEnt = Frame(pestania4)
@@ -210,6 +228,8 @@ IDAct.pack()
 
 BtnCons = Button(FActEnt,text="Buscar",command=buscarIDActualizar)
 BtnCons.pack(pady=paddingY)
+BtnRestCamp = Button(FActEnt,text="Restablecer",command=restablecePestAct)
+BtnRestCamp.pack()
 
 #Campos donde se cargaran los datos a actualizar
 LblName = Label(FActEnt,text="Nombre")
@@ -228,7 +248,7 @@ EntradaCorreoAct.config(state="disabled")
 LblPassAct = Label(FActEnt,text="Contraseña")
 LblPassAct.pack()
 
-EntradaPasswordAct = Entry(FActEnt)
+EntradaPasswordAct = Entry(FActEnt,show="*")
 EntradaPasswordAct.pack()
 EntradaPasswordAct.config(state="disabled")
 
@@ -257,6 +277,7 @@ IDDel.pack()
 BtnBuscaEliminar = Button(FEliEnt,text="Buscar",command=buscaEliminacion)
 BtnBuscaEliminar.pack(pady=paddingY)
 
+
 #Muestra la informacion asociada al ID a eliminar
 LblNameDEL = Label(FEliEnt,text="Nombre")
 LblNameDEL.pack()
@@ -275,6 +296,8 @@ txtCorreoDEL.config(state="disabled")
 BtnEliminar = Button(FEliBtn,text="Eliminar",command=eliminarUsuario)
 BtnEliminar.pack(pady=paddingY)
 BtnEliminar.config(state="disabled")
+
+
 
 #agregamos las pestaniias al notebook
 panel.add(pestania1,text="Formulario de usuarios")
